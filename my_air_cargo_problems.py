@@ -251,6 +251,30 @@ class AirCargoProblem(Problem):
         """
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
         count = 0
+
+        # -- Pseudo -- 
+        # Convert State to Stirng TFTFFFTT... effect_re
+        # for each difference:
+        #     find what literat/action
+        #     if action is _plane, airport: At(P_, A_):
+        #         count += 1
+        #     if action is _cargo, airport: At(C_, A_):
+        #         count += 3
+        #     if action is _cargo, plane: In(C_, P_):
+        #         count += 1
+        #     else:
+        #         # Generic cases missed
+        #         count += 2
+
+        value = self.initial_state_TF
+
+        for i in range(len(goal)+1):
+            if value[i] != goal[i]:
+                # find the action type inconsistent
+    #TODO:////////////////////////////////////////////////////////////// need to figure out
+                if 
+
+
         return count
 
 
