@@ -18,8 +18,6 @@
 /* ========================================================================== */
 """
 
-
-
 from aimacode.planning import Action
 from aimacode.search import Problem
 from aimacode.utils import expr
@@ -332,6 +330,20 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
+
+        level_a = set{}
+
+        prev_level_s = self.s_levels[level]
+
+        for state in prev_level_s:
+            for action in self.problem.actions(state):
+                PgNode_s(action)
+
+        # -- TODO Continue -----------------------------------------------------
+
+
+        self.a_levels[level] = level_a
+
 
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph

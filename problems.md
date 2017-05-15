@@ -16,3 +16,15 @@ problems.md
 
 		Plane carrying a cargo to an airport for Cargo Goal
 		But, Plane was already goal state at the init. airport
+
+
+TASKS TODO:
+
+- `PlanningGraph.add_action_level` method
+- `PlanningGraph.add_literal_level` method
+- `PlanningGraph.inconsistent_effects_mutex` method
+- `PlanningGraph.interference_mutex` method
+- `PlanningGraph.competing_needs_mutex` method
+- `PlanningGraph.negation_mutex` method
+- `PlanningGraph.inconsistent_support_mutex` method
+- `PlanningGraph.h_levelsum` method
