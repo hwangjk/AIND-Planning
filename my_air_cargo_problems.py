@@ -81,16 +81,10 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             """
             loads = []
-            # TODO create all load ground actions from the domain Load action
            
             for c in self.cargos:
                 for p in self.planes:
                     for a in self.airports:
-
-                        # preconditions -- 
-                        # if cargo is able to be loaded, it must be at 
-                        # airport of question and 
-                        # must not be inside a plane 
 
                         precond_pos = [expr("At({}, {})".format(p, a)),
                                         expr("At({}, {})".format(c, a)), 
@@ -102,7 +96,7 @@ class AirCargoProblem(Problem):
                                      [precond_pos, precond_neg],
                                      [effect_add, effect_rem])
                         loads.append(load)
-            # TODO-END
+
             return loads
 
         def unload_actions():
@@ -111,7 +105,6 @@ class AirCargoProblem(Problem):
             :return: list of Action objects
             """
             unloads = []
-            # TODO create all Unload ground actions from the domain Unload action
             
             for c in self.cargos:
                 for p in self.planes:
@@ -127,7 +120,6 @@ class AirCargoProblem(Problem):
                                      [precond_pos, precond_neg],
                                      [effect_add, effect_rem])
                         unloads.append(unload)
-            # TODO-END
 
             return unloads
 
@@ -161,9 +153,7 @@ class AirCargoProblem(Problem):
             state represented as T/F string of mapped fluents (state variables)
             e.g. 'FTTTFF'
         :return: list of Action objects
-        """
-        # Options for Actions at that state 
-  
+        """  
         possible_actions = []
         kb = PropKB()
 
@@ -193,7 +183,6 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        # TODO implement
         new_state = FluentState([], [])
         # results logic block cited from 'example_have_cake.py'
         old_state = decode_state(state, self.state_map)
@@ -249,33 +238,18 @@ class AirCargoProblem(Problem):
         conditions by ignoring the preconditions required for an action to be
         executed.
         """
-        # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
-        count = 0
 
-        # -- Pseudo -- 
-        # Convert State to Stirng TFTFFFTT... effect_re
-        # for each difference:
-        #     find what literat/action
-        #     if action is _plane, airport: At(P_, A_):
-        #         count += 1
-        #     if action is _cargo, airport: At(C_, A_):
-        #         count += 3
-        #     if action is _cargo, plane: In(C_, P_):
-        #         count += 1
-        #     else:
-        #         # Generic cases missed
-        #         count += 2
+        # values is the initial state fluentobject 
 
-        value = self.initial_state_TF
+        values = decode_state(self.initial_state_TF, self.state_map)
 
-        for i in range(len(goal)+1):
-            if value[i] != goal[i]:
-                # find the action type inconsistent
-    #TODO:////////////////////////////////////////////////////////////// need to figure out
-                if 
+        # heuristic count of unsatisfied fluents as total goal fluents - the intersection of init. state and goals (already satisfied)
+        # still lower bounded even if multple goal states because 
+        # cargo to airport 3 actions-4 actions (unload, fly, load) + plane to airport (fly)
+        # is 3 min but for each in unsatisfied goals give fly + cargo to another as 2 move hence doesn't overestimate
+               
+        return (len(self.goal) - len(list(set(self.goal).intersection(values.pos))))
 
-
-        return count
 
 
 def air_cargo_p1() -> AirCargoProblem:
