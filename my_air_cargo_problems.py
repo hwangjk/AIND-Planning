@@ -244,12 +244,11 @@ class AirCargoProblem(Problem):
         values = decode_state(self.initial_state_TF, self.state_map)
 
         # heuristic count of unsatisfied fluents as total goal fluents - the intersection of init. state and goals (already satisfied)
-        # still lower bounded even if multple goal states because 
+        # still lower bounded even if multiple goal states because 
         # cargo to airport 3 actions-4 actions (unload, fly, load) + plane to airport (fly)
         # is 3 min but for each in unsatisfied goals give fly + cargo to another as 2 move hence doesn't overestimate
                
         return (len(self.goal) - len(list(set(self.goal).intersection(values.pos))))
-
 
 
 def air_cargo_p1() -> AirCargoProblem:

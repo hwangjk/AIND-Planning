@@ -1,3 +1,25 @@
+"""* ========================================================================== */
+/* File: my_planning_graph.py
+ *
+ * Project name: Planning Search Project - Air Cargo Problems && Graph Algorithms
+ * Authors: Joseph Hwang & Udacity Staff (AIND)
+ * Mentor: Khushboo Tiwari
+ *
+ * Description: This python file defines AI planning graph class and functionalities
+ *
+ * Usage: Defines used for run_search.py 
+ *
+ *         Run using Anaconda package env listed in UNIX and Windows aind-environment yml files included
+ *
+ * Citation: Logic & Planning lecture notes in Udacity's AIND program.
+ *           AIMA 3rd edition by Russell, Norvig..
+ *
+ */
+/* ========================================================================== */
+"""
+
+
+
 from aimacode.planning import Action
 from aimacode.search import Problem
 from aimacode.utils import expr
