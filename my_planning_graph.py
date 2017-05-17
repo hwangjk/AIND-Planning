@@ -331,15 +331,20 @@ class PlanningGraph():
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
 
-        level_a = set{}
+        level_a = set()
 
         prev_level_s = self.s_levels[level]
 
         for state in prev_level_s:
             for action in self.problem.actions(state):
-                PgNode_s(action)
+                node = PgNode_a(action)
 
-        # -- TODO Continue -----------------------------------------------------
+                # add to action level IFF all prereq literals held in s_levels[level] :: TODO:////////////////////
+                if state in node.prenodes:
+
+                    state.children.append(node)
+                    node.parents.append(state)
+                    level_a.append(node)
 
 
         self.a_levels[level] = level_a
@@ -362,6 +367,32 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
+        level_s = set()
+
+        if level < 1:
+            # no previous action levels
+            return None
+
+        prev_level_a = self.a_levels[level-1]
+
+        for action in prev_level_a:
+            for literal in action.effnodes:
+
+                # how to keep track of preconditions that meet the action -- TODO:://///////////////////
+
+
+                node = PgNode_s(action, action.is_persistent)
+
+                # add to action level IFF all prereq literals held in s_levels[level]
+                if state in node.prenodes:
+
+                    state.children.append(node)
+                    node.parents.append(state)
+                    level_s.append(node)
+
+
+        self.s_levels[level] = level_s
+
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
@@ -420,6 +451,21 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Effects between nodes
+        action1 = node_a1.action 
+        action2 = node_a2.action
+
+        p_effects1 = action1.effect[0]
+        p_effects2 = action2.effect[0]
+
+        n_effects1 = action1.effect[0]
+        n_effects2 = action2.effect[0]
+
+        if (len(list(set(p_effects1).intersection(n_effects2)))) > 0:
+            return True
+
+        if (len(list(set(n_effects1).intersection(p_effects2)))) > 0:
+            return True
+
         return False
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:

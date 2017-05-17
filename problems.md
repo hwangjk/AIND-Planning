@@ -18,6 +18,8 @@ problems.md
 		But, Plane was already goal state at the init. airport
 
 
+2. How to keep track of if preconditions are met in level adding methods 
+
 TASKS TODO:
 
 - `PlanningGraph.add_action_level` method
