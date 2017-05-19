@@ -21,7 +21,7 @@
 from aimacode.planning import Action
 from aimacode.search import Problem
 from aimacode.utils import expr
-from lp_utils import decode_state
+from lp_utils import decode_state, encode_state
 
 
 class PgNode():
@@ -332,22 +332,27 @@ class PlanningGraph():
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
 
         level_a = set()
+        print(level)
+        for literal in self.s_levels[level]:
+            # loop through list of all actions possible from this prelevel state
+            # print(encode(literal.symbol, self.state_map))
+            # TODO:///////////////////////////---------------------------------------
+            for action in self.problem.actions(encode_state(literal.symbol, self.problem.state_map)):
+                # need to check if other preconditions are held before adding this action to level
+                for clause in action.precond_pos:
+                    if clause not in self.fs.pos:
 
-        prev_level_s = self.s_levels[level]
-
-        for state in prev_level_s:
-            for action in self.problem.actions(state):
+                        continue
+                for clause in action.precond_neg:
+                    if clause in self.fs.neg:
+                        continue
+                # all precond literals met so add action to action level
                 node = PgNode_a(action)
+                literal.children.add(node)
+                node.parents.add(literal)
+                level_a.add(node)
 
-                # add to action level IFF all prereq literals held in s_levels[level] :: TODO:////////////////////
-                if state in node.prenodes:
-
-                    state.children.append(node)
-                    node.parents.append(state)
-                    level_a.append(node)
-
-
-        self.a_levels[level] = level_a
+        self.a_levels.append(level_a)
 
 
     def add_literal_level(self, level):
@@ -371,28 +376,17 @@ class PlanningGraph():
 
         if level < 1:
             # no previous action levels
+            print("NONE\n")
             return None
 
-        prev_level_a = self.a_levels[level-1]
-
-        for action in prev_level_a:
+        for action in self.a_levels[level-1]:
             for literal in action.effnodes:
-
-                # how to keep track of preconditions that meet the action -- TODO:://///////////////////
-
-
                 node = PgNode_s(action, action.is_persistent)
+                action.children.add(node)
+                node.parents.add(action)
+                level_s.add(node)
 
-                # add to action level IFF all prereq literals held in s_levels[level]
-                if state in node.prenodes:
-
-                    state.children.append(node)
-                    node.parents.append(state)
-                    level_s.append(node)
-
-
-        self.s_levels[level] = level_s
-
+        self.s_levels.append(level_s)
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
