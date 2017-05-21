@@ -333,19 +333,15 @@ class PlanningGraph():
 
         level_a = set()
 
-        # This is the problem ---- 
-
-
         for action in self.all_actions:
-
-            # test to see if proposed PgNode_a has prenodes that are a subset of the previous S level
-            print("TIMEs")
             node = PgNode_a(action)
-            print(node.prenodes)
+
+            for x in node.prenodes:
+                x.show()
+
             if node.prenodes.issubset(self.s_levels[level]):
+                print("PRENODES Met")
                 # prenodes met 
-                print("ADD")
-                # find the parent literal nodes and add
                 for literal in self.s_levels[level]: 
                     for p in node.prenodes:
                         if literal.__eq__(p):
@@ -354,9 +350,7 @@ class PlanningGraph():
                             level_a.add(node)
             else:
                 continue
-            # end test
-        print("This is how many")
-        print(len(level_a))
+
         self.a_levels.append(level_a)
 
 
@@ -381,12 +375,9 @@ class PlanningGraph():
 
         if level < 1:
             # no previous action levels
-            print("NONE\n")
             return None
 
         for action in self.a_levels[level-1]:
-            action.show()
-            for literal in action.effnodes:
                 node = PgNode_s(action, action.is_persistent)
                 action.children.add(node)
                 node.parents.add(action)
@@ -451,21 +442,20 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Effects between nodes
-        action1 = node_a1.action 
-        action2 = node_a2.action
 
-        p_precond1 = action1.precond_pos
-        p_precond2 = action2.precond_pos
+        p_precond1 = node_a1.action.precond_pos
+        p_precond2 = node_a2.action.precond_pos
 
-        n_precond1 = action1.precond_neg
-        n_precond2 = action2.precond_neg
+        n_precond1 = node_a1.action.precond_neg
+        n_precond2 = node_a2.action.precond_neg
 
-        p_effects1 = action1.effect_add
-        p_effects2 = action2.effect_add
+        p_effects1 = node_a1.action.effect_add
+        p_effects2 = node_a2.action.effect_add
 
-        n_effects1 = action1.effect_rem
-        n_effects2 = action2.effect_rem
+        n_effects1 = node_a1.action.effect_rem
+        n_effects2 = node_a2.action.effect_rem
 
+        # Opposing Effects checks 
 
         if (len(list(set(p_effects1).intersection(n_effects2)))) > 0:
             mutexify(node_a1, node_a2)
@@ -475,11 +465,31 @@ class PlanningGraph():
             mutexify(node_a1, node_a2)
             return True
 
+        # Opposing Preconditions checks
+
         if (len(list(set(p_precond1).intersection(n_precond2)))) > 0:
             mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(p_precond2).intersection(n_precond1)))) > 0:
+            mutexify(node_a1, node_a2)
+            return True
+
+        # Opposing Precondition - Effect checks
+
+        if (len(list(set(p_precond1).intersection(p_effects2)))) > 0:
+            mutexify(node_a1, node_a2)
+            return True
+
+        if (len(list(set(p_precond2).intersection(p_effects1)))) > 0:
+            mutexify(node_a1, node_a2)
+            return True
+
+        if (len(list(set(n_precond1).intersection(n_effects2)))) > 0:
+            mutexify(node_a1, node_a2)
+            return True
+
+        if (len(list(set(n_precond2).intersection(n_effects1)))) > 0:
             mutexify(node_a1, node_a2)
             return True
 
