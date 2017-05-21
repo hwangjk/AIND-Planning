@@ -332,26 +332,31 @@ class PlanningGraph():
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
 
         level_a = set()
-        print(level)
-        for literal in self.s_levels[level]:
-            # loop through list of all actions possible from this prelevel state
-            # print(encode(literal.symbol, self.state_map))
-            # TODO:///////////////////////////---------------------------------------
-            for action in self.problem.actions(encode_state(literal.symbol, self.problem.state_map)):
-                # need to check if other preconditions are held before adding this action to level
-                for clause in action.precond_pos:
-                    if clause not in self.fs.pos:
 
-                        continue
-                for clause in action.precond_neg:
-                    if clause in self.fs.neg:
-                        continue
-                # all precond literals met so add action to action level
-                node = PgNode_a(action)
-                literal.children.add(node)
-                node.parents.add(literal)
-                level_a.add(node)
+        # This is the problem ---- 
 
+
+        for action in self.all_actions:
+
+            # test to see if proposed PgNode_a has prenodes that are a subset of the previous S level
+            print("TIMEs")
+            node = PgNode_a(action)
+            print(node.prenodes)
+            if node.prenodes.issubset(self.s_levels[level]):
+                # prenodes met 
+                print("ADD")
+                # find the parent literal nodes and add
+                for literal in self.s_levels[level]: 
+                    for p in node.prenodes:
+                        if literal.__eq__(p):
+                            literal.children.add(node)
+                            node.parents.add(literal)
+                            level_a.add(node)
+            else:
+                continue
+            # end test
+        print("This is how many")
+        print(len(level_a))
         self.a_levels.append(level_a)
 
 
@@ -380,6 +385,7 @@ class PlanningGraph():
             return None
 
         for action in self.a_levels[level-1]:
+            action.show()
             for literal in action.effnodes:
                 node = PgNode_s(action, action.is_persistent)
                 action.children.add(node)
@@ -448,16 +454,33 @@ class PlanningGraph():
         action1 = node_a1.action 
         action2 = node_a2.action
 
-        p_effects1 = action1.effect[0]
-        p_effects2 = action2.effect[0]
+        p_precond1 = action1.precond_pos
+        p_precond2 = action2.precond_pos
 
-        n_effects1 = action1.effect[0]
-        n_effects2 = action2.effect[0]
+        n_precond1 = action1.precond_neg
+        n_precond2 = action2.precond_neg
+
+        p_effects1 = action1.effect_add
+        p_effects2 = action2.effect_add
+
+        n_effects1 = action1.effect_rem
+        n_effects2 = action2.effect_rem
+
 
         if (len(list(set(p_effects1).intersection(n_effects2)))) > 0:
+            mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(n_effects1).intersection(p_effects2)))) > 0:
+            mutexify(node_a1, node_a2)
+            return True
+
+        if (len(list(set(p_precond1).intersection(n_precond2)))) > 0:
+            mutexify(node_a1, node_a2)
+            return True
+
+        if (len(list(set(p_precond2).intersection(n_precond1)))) > 0:
+            mutexify(node_a1, node_a2)
             return True
 
         return False
