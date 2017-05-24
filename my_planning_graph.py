@@ -7,7 +7,7 @@
  *
  * Description: This python file defines AI planning graph class and functionalities
  *
- * Usage: Defines used for run_search.py 
+ * Usage: Planning graph and mutex defines for run_search.py
  *
  *         Run using Anaconda package env listed in UNIX and Windows aind-environment yml files included
  *
@@ -220,8 +220,8 @@ def mutexify(node1: PgNode, node2: PgNode):
 class PlanningGraph():
     """
     A planning graph as described in chapter 10 of the AIMA text. The planning
-    graph can be used to reason about 
-    """
+    graph can be used to reason about
+     """
 
     def __init__(self, problem: Problem, state: str, serial_planning=True):
         """
@@ -359,19 +359,12 @@ class PlanningGraph():
         :return:
             adds S nodes to the current level in self.s_levels[level]
         """
-        # TODO add literal S level to the planning graph as described in the Russell-Norvig text
-        # 1. determine what literals to add
-        # 2. connect the nodes
-        # for example, every A node in the previous level has a list of S nodes in effnodes that represent the effect
-        #   produced by the action.  These literals will all be part of the new S level.  Since we are working with sets, they
-        #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
-        #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
-        #   parent sets of the S nodes
+
         level_s = set()
 
-        # if level < 1:
-        #     # no previous action levels
-        #     return None
+        if level < 1:
+            # no previous action levels
+            return None
 
         for a_node in self.a_levels[level-1]:
 
@@ -419,7 +412,6 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        #
         if not self.serial:
             return False
         if node_a1.is_persistent or node_a2.is_persistent:
@@ -431,16 +423,10 @@ class PlanningGraph():
         Test a pair of actions for inconsistent effects, returning True if
         one action negates an effect of the other, and False otherwise.
 
-        HINT: The Action instance associated with an action node is accessible
-        through the PgNode_a.action attribute. See the Action class
-        documentation for details on accessing the effects and preconditions of
-        an action.
-
         :param node_a1: PgNode_a
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Inconsistent Effects between nodes
 
         p_precond1 = node_a1.action.precond_pos
         p_precond2 = node_a2.action.precond_pos
@@ -454,7 +440,7 @@ class PlanningGraph():
         n_effects1 = node_a1.action.effect_rem
         n_effects2 = node_a2.action.effect_rem
 
-        # Opposing Effects checks 
+        # Opposing Effects checks if effects are conflicting in both sets
 
         if (len(list(set(p_effects1).intersection(n_effects2)))) > 0:
             mutexify(node_a1, node_a2)
@@ -464,7 +450,7 @@ class PlanningGraph():
             mutexify(node_a1, node_a2)
             return True
 
-        # Opposing Preconditions checks
+        # Opposing Preconditions checks preconditions are conflicting in both sets
 
         if (len(list(set(p_precond1).intersection(n_precond2)))) > 0:
             mutexify(node_a1, node_a2)
@@ -481,16 +467,10 @@ class PlanningGraph():
         Test a pair of actions for mutual exclusion, returning True if the 
         effect of one action is the negation of a precondition of the other.
 
-        HINT: The Action instance associated with an action node is accessible
-        through the PgNode_a.action attribute. See the Action class
-        documentation for details on accessing the effects and preconditions of
-        an action.
-
         :param node_a1: PgNode_a
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Interference between nodes
 
         p_precond1 = node_a1.action.precond_pos
         p_precond2 = node_a2.action.precond_pos
@@ -504,7 +484,7 @@ class PlanningGraph():
         n_effects1 = node_a1.action.effect_rem
         n_effects2 = node_a2.action.effect_rem
 
-        # Opposing Precondition - Effect checks
+        # Opposing Precondition - Effect checks  
 
         if (len(list(set(p_precond1).intersection(p_effects2)))) > 0:
             mutexify(node_a1, node_a2)
@@ -540,7 +520,7 @@ class PlanningGraph():
                 if x.is_mutex(y):
                     mutexify(node_a1, node_a2)
                     return True
-
+        # none of precondition literals are mutexs
         return False
 
     def update_s_mutex(self, nodeset: set):
@@ -574,6 +554,7 @@ class PlanningGraph():
 
         if node_s1.symbol == node_s2.symbol:
             if node_s1.is_pos != node_s2.is_pos:
+                # negation mutex
                 mutexify(node_s1, node_s2)
                 return True
         return False
@@ -623,7 +604,7 @@ class PlanningGraph():
             level_cost += 1
 
         if len(goals) > 0:
-            #not all goals are fulfilled 
+            # not all goals are fulfilled 
             return sys.maxsize
         else:
             return level_sum
