@@ -566,11 +566,7 @@ class PlanningGraph():
         """
         Test a pair of state literals for mutual exclusion, returning True if
         one node is the negation of the other, and False otherwise.
-
-        HINT: Look at the PgNode_s.__eq__ defines the notion of equivalence for
-        literal expression nodes, and the class tracks whether the literal is
-        positive or negative.
-
+        
         :param node_s1: PgNode_s
         :param node_s2: PgNode_s
         :return: bool
@@ -591,9 +587,6 @@ class PlanningGraph():
         are pairwise mutually exclusive with all of the actions that could
         achieve the second literal node.
 
-        HINT: The PgNode.is_mutex method can be used to test whether two nodes
-        are mutually exclusive.
-
         :param node_s1: PgNode_s
         :param node_s2: PgNode_s
         :return: bool
@@ -603,7 +596,7 @@ class PlanningGraph():
             for y in node_s2.parents:
                 if not x.is_mutex(y):
                     return False
-
+        # since all parent actions nodes are pairwise mutex
         mutexify(node_s1, node_s2)
         return True
 
@@ -612,31 +605,21 @@ class PlanningGraph():
 
         :return: int
         """
-        level_sum = 0
-        # TODO implement
-        # for each goal in the problem, determine the level cost, then add them together
-        
+     
         goals = self.problem.goal
-        print(len(goals))
-        for x in goals:
-            print(x)
-        # iterate through the state levels until find all goal appearances
 
-        level_cost = 1
+        level_sum = 0
+        level_cost = 0
+
         for level in self.s_levels:
             for state in level:
-                print("state")
-                # if len(goals) == 0:
-                #     #done
-                #     print("done")
-                #     return level_sum
                 if state.symbol in goals:
-                    print("add")
-                    level_sum += level_cost
-                    print("level_sum inside is ", level_sum)
-                    print("level_cose is ", level_cost)
-                    goals.remove(state.symbol)
+                    # goals are only positive literals so is_pos check 
+                    if state.is_pos:
+                        # goal met
+                        level_sum += level_cost
+                        goals.remove(state.symbol)
+
             level_cost += 1
 
-        print("level sum is ", level_sum)
         return level_sum
