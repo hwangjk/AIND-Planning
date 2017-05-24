@@ -22,7 +22,7 @@ from aimacode.planning import Action
 from aimacode.search import Problem
 from aimacode.utils import expr
 from lp_utils import decode_state, encode_state
-
+import copy
 
 class PgNode():
     """Base class for planning graph nodes.
@@ -566,7 +566,7 @@ class PlanningGraph():
         """
         Test a pair of state literals for mutual exclusion, returning True if
         one node is the negation of the other, and False otherwise.
-        
+
         :param node_s1: PgNode_s
         :param node_s2: PgNode_s
         :return: bool
@@ -606,7 +606,7 @@ class PlanningGraph():
         :return: int
         """
      
-        goals = self.problem.goal
+        goals = copy.deepcopy(self.problem.goal)
 
         level_sum = 0
         level_cost = 0
@@ -622,4 +622,8 @@ class PlanningGraph():
 
             level_cost += 1
 
-        return level_sum
+        if len(goals) > 0:
+            #not all goals are fulfilled 
+            return sys.maxsize
+        else:
+            return level_sum
