@@ -443,21 +443,17 @@ class PlanningGraph():
         # Opposing Effects checks if effects are conflicting in both sets
 
         if (len(list(set(p_effects1).intersection(n_effects2)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(n_effects1).intersection(p_effects2)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         # Opposing Preconditions checks preconditions are conflicting in both sets
 
         if (len(list(set(p_precond1).intersection(n_precond2)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(p_precond2).intersection(n_precond1)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         return False
@@ -487,19 +483,15 @@ class PlanningGraph():
         # Opposing Precondition - Effect checks  
 
         if (len(list(set(p_precond1).intersection(p_effects2)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(p_precond2).intersection(p_effects1)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(n_precond1).intersection(n_effects2)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         if (len(list(set(n_precond2).intersection(n_effects1)))) > 0:
-            # mutexify(node_a1, node_a2)
             return True
 
         return False
@@ -518,7 +510,6 @@ class PlanningGraph():
         for x in node_a1.parents:
             for y in node_a2.parents:
                 if x.is_mutex(y):
-                    # mutexify(node_a1, node_a2)
                     return True
         # none of precondition literals are mutexs
         return False
@@ -555,7 +546,6 @@ class PlanningGraph():
         if node_s1.symbol == node_s2.symbol:
             if node_s1.is_pos != node_s2.is_pos:
                 # negation mutex
-                # mutexify(node_s1, node_s2)
                 return True
         return False
 
@@ -578,7 +568,6 @@ class PlanningGraph():
                 if not x.is_mutex(y):
                     return False
         # since all parent actions nodes are pairwise mutex
-        # mutexify(node_s1, node_s2)
         return True
 
     def h_levelsum(self) -> int:
