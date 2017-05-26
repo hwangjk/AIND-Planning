@@ -36,7 +36,6 @@ from functools import lru_cache
 class AirCargoProblem(Problem):
     def __init__(self, cargos, planes, airports, initial: FluentState, goal: list):
         """
-
         :param cargos: list of str
             cargos in the problem
         :param planes: list of str
@@ -68,7 +67,6 @@ class AirCargoProblem(Problem):
         list<Action>
             list of Action objects
         """
-
         def load_actions():
             """Create all concrete Load actions and return a list
 

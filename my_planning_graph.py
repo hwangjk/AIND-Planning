@@ -323,13 +323,8 @@ class PlanningGraph():
         :return:
             adds A nodes to the current level in self.a_levels[level]
         """
-        # TODO add action A level to the planning graph as described in the Russell-Norvig text
         # 1. determine what actions to add and create those PgNode_a objects
         # 2. connect the nodes to the previous S literal level
-        # for example, the A0 level will iterate through all possible actions for the problem and add a PgNode_a to a_levels[0]
-        #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
-        #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
-        #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
 
         level_a = set()
 
@@ -506,7 +501,6 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-
         for x in node_a1.parents:
             for y in node_a2.parents:
                 if x.is_mutex(y):
@@ -542,7 +536,6 @@ class PlanningGraph():
         :param node_s2: PgNode_s
         :return: bool
         """
-
         if node_s1.symbol == node_s2.symbol:
             if node_s1.is_pos != node_s2.is_pos:
                 # negation mutex
@@ -562,7 +555,6 @@ class PlanningGraph():
         :param node_s2: PgNode_s
         :return: bool
         """
-
         for x in node_s1.parents:
             for y in node_s2.parents:
                 if not x.is_mutex(y):
@@ -575,7 +567,6 @@ class PlanningGraph():
 
         :return: int
         """
-     
         goals = copy.deepcopy(self.problem.goal)
 
         level_sum = 0
