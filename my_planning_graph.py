@@ -423,32 +423,20 @@ class PlanningGraph():
         :return: bool
         """
 
-        p_precond1 = node_a1.action.precond_pos
-        p_precond2 = node_a2.action.precond_pos
-
-        n_precond1 = node_a1.action.precond_neg
-        n_precond2 = node_a2.action.precond_neg
-
-        p_effects1 = node_a1.action.effect_add
-        p_effects2 = node_a2.action.effect_add
-
-        n_effects1 = node_a1.action.effect_rem
-        n_effects2 = node_a2.action.effect_rem
-
         # Opposing Effects checks if effects are conflicting in both sets
 
-        if (len(list(set(p_effects1).intersection(n_effects2)))) > 0:
+        if (len(list(set(node_a1.action.effect_add).intersection(node_a2.action.effect_rem)))) > 0:
             return True
 
-        if (len(list(set(n_effects1).intersection(p_effects2)))) > 0:
+        if (len(list(set(node_a1.action.effect_rem).intersection(node_a2.action.effect_add)))) > 0:
             return True
 
         # Opposing Preconditions checks preconditions are conflicting in both sets
 
-        if (len(list(set(p_precond1).intersection(n_precond2)))) > 0:
+        if (len(list(set(node_a1.action.precond_pos).intersection(node_a2.action.precond_neg)))) > 0:
             return True
 
-        if (len(list(set(p_precond2).intersection(n_precond1)))) > 0:
+        if (len(list(set(node_a2.action.precond_pos).intersection(node_a1.action.precond_neg)))) > 0:
             return True
 
         return False
@@ -462,31 +450,18 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-
-        p_precond1 = node_a1.action.precond_pos
-        p_precond2 = node_a2.action.precond_pos
-
-        n_precond1 = node_a1.action.precond_neg
-        n_precond2 = node_a2.action.precond_neg
-
-        p_effects1 = node_a1.action.effect_add
-        p_effects2 = node_a2.action.effect_add
-
-        n_effects1 = node_a1.action.effect_rem
-        n_effects2 = node_a2.action.effect_rem
-
         # Opposing Precondition - Effect checks  
 
-        if (len(list(set(p_precond1).intersection(p_effects2)))) > 0:
+        if (len(list(set(node_a1.action.precond_pos).intersection(node_a2.action.effect_rem)))) > 0:
             return True
 
-        if (len(list(set(p_precond2).intersection(p_effects1)))) > 0:
+        if (len(list(set(node_a2.action.precond_pos).intersection(node_a1.action.effect_rem)))) > 0:
             return True
 
-        if (len(list(set(n_precond1).intersection(n_effects2)))) > 0:
+        if (len(list(set(node_a1.action.precond_neg).intersection(node_a2.action.effect_add)))) > 0:
             return True
 
-        if (len(list(set(n_precond2).intersection(n_effects1)))) > 0:
+        if (len(list(set(node_a2.action.precond_neg).intersection(node_a1.action.effect_add)))) > 0:
             return True
 
         return False
@@ -585,6 +560,8 @@ class PlanningGraph():
 
         if len(goals) > 0:
             # not all goals are fulfilled 
+
             return sys.maxsize
         else:
+
             return level_sum

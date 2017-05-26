@@ -67,6 +67,7 @@ class AirCargoProblem(Problem):
         list<Action>
             list of Action objects
         """
+        
         def load_actions():
             """Create all concrete Load actions and return a list
 
@@ -231,15 +232,12 @@ class AirCargoProblem(Problem):
         executed.
         """
 
-        # values is the initial state fluentobject 
+        # values is the current state fluentobject 
 
-        values = decode_state(self.initial_state_TF, self.state_map)
+        values = decode_state(node.state, self.state_map)
 
-        # heuristic count of unsatisfied fluents as total goal fluents - the intersection of init. state and goals (already satisfied)
-        # still lower bounded even if multiple goal states because 
-        # cargo to airport 3 actions-4 actions (unload, fly, load) + plane to airport (fly)
-        # is 3 min but for each in unsatisfied goals give fly + cargo to another as 2 move hence doesn't overestimate
-               
+        # heuristic count of unsatisfied fluents as total goal fluents - the intersection of state and goals (already satisfied)
+    
         return (len(self.goal) - len(list(set(self.goal).intersection(values.pos))))
 
 
